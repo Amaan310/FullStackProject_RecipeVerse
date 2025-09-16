@@ -14,7 +14,7 @@ dbConnect();
 app.use(express.json());
 
 app.use(cors({
-    origin: "https://foodverse-frontend.vercel.app/" 
+    origin: "https://foodverse-frontend.vercel.app" 
 }));
 
 app.use(express.static("public"));
