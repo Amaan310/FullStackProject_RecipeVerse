@@ -13,8 +13,13 @@ dbConnect();
 // middleware
 app.use(express.json());
 
+const allowedOrigins = [
+    'https://foodverse-frontend.vercel.app',
+    'https://foodverse-frontend-r5f7856dm-amaans310s-projects.vercel.app'
+];
+
 app.use(cors({
-    origin: "https://foodverse-frontend.vercel.app" 
+    origin: allowedOrigins
 }));
 
 app.use(express.static("public"));
