@@ -10,7 +10,7 @@ const verifyToken = async (req, res, next) => {
         .json({ message: "No token provided or token format is invalid." });
     }
 
-    token = token.split(" ")[1]; // Using a synchronous version for simplicity, which is fine for middleware. // A more robust solution might use promisify, but this is a quick fix.
+    token = token.split(" ")[1]; 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     req.user = decoded;
     next();
