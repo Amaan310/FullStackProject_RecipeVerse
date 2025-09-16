@@ -19,28 +19,35 @@
 ---
 
 ## Tech Stack 🧰⚙️💻📱☁️👨‍💻
-- **Frontend**:
+
+**Frontend**:
+
 - React.js: A declarative, component-based JavaScript library for building dynamic user interfaces. ⚛️
 - Tailwind CSS: A highly customizable, utility-first CSS framework for rapid UI development. 🎨
 - Axios: Promise-based HTTP client for making API requests from the browser. 🌐
 - React Router: For declarative routing within the single-page application. 🧭
 
-- **Backend**:
+**Backend**:
+
 - Node.js: A JavaScript runtime for building scalable server-side applications. 🟢
 - Express.js: A fast, unopinionated, minimalist web framework for Node.js. 🚀
   
-- **Database**:
+**Database**:
+
 - MongoDB: A flexible NoSQL document database for storing application data. 🍃
 - Mongoose: An elegant MongoDB object modeling tool for Node.js, simplifying data interactions.
 
-- **Authentication**:
+**Authentication**:
+
 - JWT (JSON Web Tokens): For secure and compact token-based authentication. 🔐
 - bcryptjs: For robust password hashing, ensuring user security. 🛡️
 
-- **File Uploads**:
+**File Uploads**:
+
 - Multer: A Node.js middleware for handling multipart/form-data, primarily used for uploading files. 📤
 
-- **Contact Form**:
+**Contact Form**:
+
 - EmailJS: For sending emails directly from the frontend without needing a backend email server. 📧
 
 ---
