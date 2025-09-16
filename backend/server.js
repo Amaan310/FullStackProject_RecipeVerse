@@ -25,6 +25,10 @@ app.use(express.static("public"));
 
 const apiRoutes = require("./routes/recipe");
 
+app.get("/api/test", (req, res) => {
+    res.json({ message: "Hello from the test route! The server is updating." });
+});
+
 app.use("/api/users", apiRoutes); 
 
 app.get('/', (req, res) => {
