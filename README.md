@@ -1,8 +1,9 @@
 # FoodVerse 🍲 - A Recipe Sharing Platform
 
-A full-stack **Food Recipe Management Application** built with the **MERN stack (MongoDB, Express, React, Node.js)**.  
-It allows users to **sign up, log in, add/share recipes, delete and update recipes and explore recipes** 
-Users can even explore recipes as per thier taste via category or using filters
+- A full-stack **Food Recipe Management Application** built with the **MERN stack (MongoDB, Express, React, Node.js)**  
+- It allows users to **sign up, log in, add/share recipes, delete and update recipes and explore recipes** 
+- Users can even explore recipes as per thier taste via category or using filters
+  
 ---
 
 ## Features 🚀 
