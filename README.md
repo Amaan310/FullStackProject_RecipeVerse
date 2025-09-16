@@ -142,4 +142,4 @@ foodverse
 ## Author 👨‍💻✍️📖
 
 **Amaan Haque**
--Email 📧: amaanhaq77@gmail.com
+- Email 📧: amaanhaq77@gmail.com
