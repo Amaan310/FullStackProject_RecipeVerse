@@ -88,7 +88,7 @@ foodverse
 │   └── 📄 package.json
 │   ├── 📄 server.js
 │   │ 
-├── frontend/ (This would be your 'food-app' folder from previous response)
+├── frontend/ 
 │   ├── public/
 │   │   └── images/
 │   │   └── vite.svg
