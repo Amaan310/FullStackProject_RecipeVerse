@@ -28,7 +28,7 @@ export default function RecipeDetails() {
       <div className=" mx-auto flex flex-col lg:flex-row gap-8">
         {/* Main Content */}
         <div className="w-full lg:w-3/3 mt-18">
-          {/*  Card */}
+          {/* Card */}
           <div className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
             
             {/* Header  */}
@@ -78,7 +78,7 @@ export default function RecipeDetails() {
                 ) : (
                   <>
                     <img
-                      src={`http://localhost:5000/images/${recipe.coverImage}`}
+                      src={`${import.meta.env.VITE_API_URL}/images/${recipe.coverImage}`}
                       alt={recipe?.title || "Recipe"}
                       className={`w-full h-full object-cover transition-all duration-500 ${
                         imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
@@ -117,7 +117,7 @@ export default function RecipeDetails() {
 
               {/* Ingredients and Instructions */}
               <div className="grid md:grid-cols-2 gap-8">
-               
+                
                 <div className="bg-rose-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
                   <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <span className="w-2 h-5 bg-rose-500 rounded-full mr-3"></span>
@@ -155,7 +155,7 @@ export default function RecipeDetails() {
               </div>
             </div>
 
-          
+        
             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
               <p className="text-sm text-gray-500">
                 Enjoy your meal! 🍽️
@@ -164,7 +164,7 @@ export default function RecipeDetails() {
           </div>
         </div>
         
-        {/*  Latest Recipes */}
+        {/* Latest Recipes */}
         <div className="w-full lg:w-2/3 mt-10 lg:mt-4">
           <div className="sticky top-26">
             <LatestRecipes />

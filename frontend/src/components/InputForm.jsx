@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 export default function InputForm({ onLoginSuccess }) {
     const [email, setEmail] = useState("");
@@ -18,13 +18,11 @@ export default function InputForm({ onLoginSuccess }) {
         const payload = isSignUp ? { name, email, password } : { email, password };
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/users/${endpoint}`, payload);
+            const response = await api.post(`/api/users/${endpoint}`, payload);
             
-            // Set the token and user info in localStorage
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("user", JSON.stringify(response.data.user));
             
-            // Call the function from App.jsx to update the state
             onLoginSuccess();
 
         } catch (err) {

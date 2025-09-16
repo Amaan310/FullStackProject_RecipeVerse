@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../utils/api"; 
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function EditRecipe() {
@@ -20,7 +20,7 @@ export default function EditRecipe() {
     useEffect(() => {
         const fetchRecipeData = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/users/getrecipe/${id}`);
+                const res = await api.get(`/api/users/getrecipe/${id}`);
                 const data = res.data.data;
                 setTitle(data.title || '');
                 setCategory(Array.isArray(data.category) ? data.category.join(', ') : '');
@@ -59,8 +59,8 @@ export default function EditRecipe() {
                 formData.append("coverImage", coverImage);
             }
 
-            await axios.put(
-                `http://localhost:5000/api/users/updaterecipe/${id}`,
+            await api.put(
+                `/api/users/updaterecipe/${id}`,
                 formData,
                 { 
                     headers: { 
@@ -141,7 +141,7 @@ export default function EditRecipe() {
                             <label className="block text-sm font-medium text-gray-700">Cover Image</label>
                             {existingImage && !coverImage && (
                                 <div className="my-2">
-                                    <img src={`http://localhost:5000/images/${existingImage}`} alt="Current recipe" className="w-48 h-32 object-cover rounded-lg shadow-md" />
+                                    <img src={`${import.meta.env.VITE_API_URL}/images/${existingImage}`} alt="Current recipe" className="w-48 h-32 object-cover rounded-lg shadow-md" />
                                 </div>
                             )}
                             <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mt-2">{existingImage ? "Change image (Optional):" : "Upload image:"}</label>

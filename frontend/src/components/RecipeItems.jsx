@@ -1,11 +1,8 @@
-// src/components/RecipeItems.jsx - (Update this file)
-
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStopwatchFill } from "react-icons/bs";
-// Import FaHeart for solid, and FiHeart for outline
 import { FaHeart, FaEdit } from "react-icons/fa";
-import { FiHeart } from 'react-icons/fi'; // ADD THIS LINE for outline heart
+import { FiHeart } from 'react-icons/fi';
 import { MdDelete } from "react-icons/md";
 import { getTagStyle } from '../utils/tagStyles.jsx';
 
@@ -32,8 +29,7 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
                 onClick={() => navigate(`/recipe/${item._id}`)}
             >
                 <img
-                    // Added fallback for coverImage, in case it's null/undefined
-                    src={item.coverImage ? `http://localhost:5000/images/${item.coverImage}` : 'https://via.placeholder.com/400x250.png?text=No+Image+Available'}
+                    src={item.coverImage ? `${import.meta.env.VITE_API_URL}/images/${item.coverImage}` : 'https://via.placeholder.com/400x250.png?text=No+Image+Available'}
                     alt={item.title || "Recipe"}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
@@ -48,9 +44,7 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
                             onClick={(e) => { e.stopPropagation(); onFavToggle(item); }}
                             aria-label="Toggle favorite"
                         >
-                            {/* --- THIS IS THE CHANGE --- */}
                             {isFavorite ? <FaHeart className="w-5 h-5" /> : <FiHeart className="w-5 h-5" />}
-                            {/* ------------------------ */}
                         </button>
                     </div>
                 )}

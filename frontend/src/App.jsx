@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { Outlet, createBrowserRouter, RouterProvider, useNavigate, useLocation, useMatches } from "react-router-dom"; // Added useMatches
-import axios from 'axios';
+import { Outlet, createBrowserRouter, RouterProvider, useNavigate, useLocation, useMatches } from "react-router-dom";
 import { Toaster } from 'react-hot-toast';
+import api from './utils/api';
 
 // Components
 import MainNavigation from './components/mainNavigations';
@@ -22,16 +22,12 @@ import AboutPage from './pages/AboutPage';
 import RecipesPage from './pages/RecipesPage';
 import CategoriesPage from './pages/CategoriesPage';
 
-const getApiBaseUrl = () => {
-
-    return import.meta.env.VITE_API_URL || 'http://localhost:5000';
-};
 
 const getAllRecipes = async ({ request }) => {
     const url = new URL(request.url);
     const category = url.searchParams.get("category");
     try {
-        const res = await axios.get(`${getApiBaseUrl()}/api/users/getrecipes`, {
+        const res = await api.get(`/api/users/getrecipes`, {
             params: { category: category }
         });
         return res.data.data || res.data || [];
@@ -48,7 +44,7 @@ const getMyRecipes = async () => {
             return []; 
         }
 
-        const allRecipes = await axios.get(`${getApiBaseUrl()}/api/users/getrecipes`); 
+        const allRecipes = await api.get(`/api/users/getrecipes`); 
         
         return allRecipes.data.data.filter(item => item.createdBy?._id === user._id) || [];
 
@@ -70,7 +66,7 @@ const getFavRecipes = () => {
 
 const getRecipe = async ({ params }) => {
     try {
-        const res = await axios.get(`${getApiBaseUrl()}/api/users/getrecipe/${params.id}`);
+        const res = await api.get(`/api/users/getrecipe/${params.id}`);
         const recipe = res.data.data || res.data;
         
         const recipeWithUsername = { ...recipe, username: recipe.createdBy?.username || 'Anonymous Chef' };
@@ -92,7 +88,7 @@ const getRecipe = async ({ params }) => {
 
 const getCategories = async () => {
     try {
-        const res = await axios.get(`${getApiBaseUrl()}/api/users/categories`);
+        const res = await api.get(`/api/users/categories`);
         return res.data.data || res.data || [];
     } catch (error) {
         console.error("Error fetching categories:", error);
@@ -184,7 +180,7 @@ export default function App() {
                 { path: "/favrecipes", element: <RecipesPage />, loader: getFavRecipes },
                 
                 { 
-                    element: <ProtectedRoute user={localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null} setModalOpen={(isOpen) => document.querySelector('body').dispatchEvent(new CustomEvent('open-login-modal', { detail: isOpen }))} />, // Use a custom event
+                    element: <ProtectedRoute user={localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null} setModalOpen={(isOpen) => document.querySelector('body').dispatchEvent(new CustomEvent('open-login-modal', { detail: isOpen }))} />,
                     children: [
                         { path: "/addrecipes", element: <AddFoodRecipe /> },
                         { path: "/editRecipe/:id", element: <EditRecipe /> },

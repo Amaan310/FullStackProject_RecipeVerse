@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { BsStopwatchFill } from "react-icons/bs"; // Added this icon for consistency
+import api from "../utils/api";
+import { BsStopwatchFill } from "react-icons/bs";
 
 export default function LatestRecipes() {
     const [allRecipes, setAllRecipes] = useState([]);
@@ -11,15 +11,11 @@ export default function LatestRecipes() {
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/users/getrecipes");
+                const res = await api.get("/api/users/getrecipes");
                 
-                // Assuming res.data.data is an array directly containing recipes
-                // Each recipe should now have a populated 'createdBy' object with 'username'
                 const recipesData = res.data.data || []; 
 
                 if (Array.isArray(recipesData)) {
-                    // No need for separate user profile fetches!
-                    // The 'createdBy' field should already be populated by the backend.
                     setAllRecipes(recipesData);
                 } else {
                     console.error("Fetched data is not an array:", recipesData);
@@ -85,16 +81,15 @@ export default function LatestRecipes() {
                     </div>
                 ) : (
                     <div className="space-y-6">
-                        {/* We'll display only the first 5-10 items as "latest additions" */}
-                        {allRecipes.slice(0, 5).map((item) => ( // Limiting to top 5 for "Latest Additions"
+                        {allRecipes.slice(0, 5).map((item) => (
                             <div key={item._id} onClick={() => navigate(`/recipe/${item._id}`)} className="bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden cursor-pointer">
                                 <div className="flex">
                                     <div className="p-2 flex-shrink-0">
                                         {item.coverImage ? (
                                             <img
-                                                src={`http://localhost:5000/images/${item.coverImage}`}
+                                                src={`${import.meta.env.VITE_API_URL}/images/${item.coverImage}`}
                                                 alt={item.title}
-                                                className="w-28 h-20 object-cover rounded-md" // Adjusted height
+                                                className="w-28 h-20 object-cover rounded-md"
                                                 onError={(e) => {
                                                     e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f8fafc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='14' fill='%236b7280'%3ENo Image%3C/text%3E%3C/svg%3E";
                                                 }}
@@ -111,28 +106,18 @@ export default function LatestRecipes() {
                                             <h3 className="font-bold text-lg text-gray-900 mb-1 line-clamp-1">
                                                 {item.title || "Untitled Recipe"}
                                             </h3>
-
-                                            {/* Instructions are often too long for this sidebar, let's just show author and time */}
-                                            {/* <p className="text-gray-700 text-sm mb-2 line-clamp-2">
-                                                {item.instructions?.substring(0, 120) || "No description available..."}
-                                                {item.instructions && item.instructions.length > 120 ? "..." : ""}
-                                            </p> */}
                                         </div>
 
                                         <div className="flex items-center justify-between mt-2">
                                             <div className="flex items-center">
-                                                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mr-2"> {/* Adjusted margin */}
+                                                <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mr-2">
                                                     <span className="text-white text-xs font-medium">
-                                                        {/* --- THE FIX IS HERE --- */}
                                                         {item.createdBy?.username ? item.createdBy.username.charAt(0).toUpperCase() : "A"}
-                                                        {/* ----------------------- */}
                                                     </span>
                                                 </div>
                                                 <div className="text-xs">
                                                     <p className="text-gray-900 leading-none capitalize">
-                                                        {/* --- THE FIX IS HERE --- */}
                                                         {item.createdBy?.username || "Anonymous Chef"}
-                                                        {/* ----------------------- */}
                                                     </p>
                                                     <p className="text-gray-600">
                                                         {new Date(item.createdAt).toLocaleDateString('en-US', {
@@ -145,8 +130,8 @@ export default function LatestRecipes() {
                                             </div>
 
                                             {item.time && (
-                                                <div className="flex items-center text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-full ml-auto"> {/* Added ml-auto to push to right */}
-                                                    <BsStopwatchFill className="text-red-500 mr-1" /> {/* Using BsStopwatchFill */}
+                                                <div className="flex items-center text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-full ml-auto">
+                                                    <BsStopwatchFill className="text-red-500 mr-1" />
                                                     <span className="font-medium">{item.time}</span>
                                                 </div>
                                             )}
