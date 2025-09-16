@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
         if (protectedPaths.some(path => location.pathname.startsWith(path))) {
             navigate('/', { replace: true });
         }
-        setModalOpen(false); // Close any open modal
+        setModalOpen(false); 
         toast.success("Logged out successfully!");
     };
     const authContextValue = {

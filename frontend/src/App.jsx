@@ -11,6 +11,7 @@ import Model from './components/Model';
 import InputForm from './components/InputForm';
 import ContactForm from './components/ContactForm';
 import ProtectedRoute from './components/ProtectedRoute'; 
+import { AuthProvider, useAuth } from './context/AuthContext_temp';
 
 // Pages
 import Home from './pages/home';
