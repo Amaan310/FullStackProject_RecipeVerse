@@ -25,7 +25,7 @@ app.use(express.static("public"));
 
 const apiRoutes = require("./routes/recipe");
 
-app.use("/api", apiRoutes); 
+app.use("/api/users", apiRoutes); 
 
 app.get('/', (req, res) => {
     res.send("<h1>This is the Home Page</h1>");
