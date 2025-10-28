@@ -126,7 +126,7 @@ export default function RecipesPage() {
 
     const INITIAL_LOAD_COUNT = 6;
     const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD_COUNT);
-    const [searchQuery, setSearchQuery] = useState(''); // State for the search query
+    const [searchQuery, setSearchQuery] = useState('');
 
     const { isFavorite, toggleFavorite, favorites } = useFavorites();
 
@@ -141,7 +141,17 @@ export default function RecipesPage() {
         recipes = loaderData?.recipes || [];
         allCategories = loaderData?.categories || [];
     } else if (isMyRecipesPage) {
-        recipes = loaderData || [];
+        // ▼▼▼ THIS IS THE ONLY CHANGE ▼▼▼
+        // First, get all recipes from the loader
+        const allLoadedRecipes = loaderData?.recipes || [];
+        // Then, filter them to show only the ones created by the logged-in user
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user._id) {
+            recipes = allLoadedRecipes.filter(item => String(item.createdBy?._id) === String(user._id));
+        } else {
+            recipes = []; // If no user, show no recipes
+        }
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
     } else if (isFavRecipesPage) {
         recipes = favorites;
     }
@@ -153,7 +163,7 @@ export default function RecipesPage() {
     }, [selectedCategory]);
 
     const handleCategoryChange = (category) => {
-        setSearchQuery(''); // Clear search when category changes
+        setSearchQuery('');
         if (category === 'All') {
             navigate('/recipes');
         } else {
@@ -161,7 +171,6 @@ export default function RecipesPage() {
         }
     };
     
-    // FILTERING LOGIC FOR SEARCH 
     const filteredRecipes = recipes.filter(recipe => 
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -200,7 +209,6 @@ export default function RecipesPage() {
                     <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">{pageSubtitle}</p>
                 </div>
                 
-                {/* SEARCH BAR IS ADDED HERE */}
                 {isExplorePage && (
                     <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
                 )}

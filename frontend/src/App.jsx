@@ -20,7 +20,6 @@ import AboutPage from './pages/AboutPage';
 import RecipesPage from './pages/RecipesPage';
 import CategoriesPage from './pages/CategoriesPage';
 
-// Get the base URL from the environment for public fetches
 const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 const getAllRecipes = async ({ request }) => {
@@ -29,13 +28,11 @@ const getAllRecipes = async ({ request }) => {
     
     let apiUrl = `${BASE_API_URL}/api/users/getrecipes`;
     if (category) {
-        // Build URL parameters for filtering
         const params = new URLSearchParams({ category: category }).toString();
         apiUrl += `?${params}`;
     }
 
     try {
-        // ▼▼▼ FIX: USE STANDARD FETCH INSTEAD OF api (Axios) ▼▼▼
         const response = await fetch(apiUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -48,16 +45,19 @@ const getAllRecipes = async ({ request }) => {
     }
 };
 
+// NOTE: This loader is now OBSOLETE but kept for reference.
 const getMyRecipes = async () => {
     try {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user || !user._id) {
             return []; 
         }
-        // This remains api.get because it requires authorization
+
         const allRecipes = await api.get(`/api/users/getrecipes`); 
         
-        return allRecipes.data.data.filter(item => item.createdBy?._id === user._id) || [];
+        return allRecipes.data.data.filter(item => 
+            String(item.createdBy?._id) === String(user._id)
+        ) || [];
 
     } catch (error) {
         console.error("Error fetching my recipes:", error);
@@ -69,7 +69,6 @@ const getFavRecipes = async () => {
     try {
         const token = localStorage.getItem('token');
         if (!token) return [];
-        // This remains api.get because it requires authorization
         const res = await api.get('/api/users/favorites');
         return res.data.favorites || [];
 
@@ -81,7 +80,6 @@ const getFavRecipes = async () => {
 
 const getRecipe = async ({ params }) => {
     try {
-        // This remains api.get because it requires authorization for detail data
         const res = await api.get(`/api/users/getrecipe/${params.id}`);
         const recipe = res.data.data || res.data;
         
@@ -104,7 +102,6 @@ const getRecipe = async ({ params }) => {
 
 const getCategories = async () => {
     try {
-        // ▼▼▼ FIX: USE STANDARD FETCH INSTEAD OF api (Axios) ▼▼▼
         const response = await fetch(`${BASE_API_URL}/api/users/categories`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -118,7 +115,6 @@ const getCategories = async () => {
 };
 
 const getRecipesAndCategories = async (loaderRequest) => {
-    // Both now use the updated getAllRecipes and getCategories functions
     const [recipes, categories] = await Promise.all([
         getAllRecipes(loaderRequest),
         getCategories() 
@@ -203,19 +199,19 @@ export default function App() {
             children: [
                 { index: true, element: <Home /> },
                 { path: "/recipes", element: <RecipesPage />, loader: getRecipesAndCategories },
-                { path: "/myRecipe", element: <RecipesPage />, loader: getMyRecipes },
+                { path: "/myRecipe", element: <RecipesPage />, loader: getRecipesAndCategories },
+                
                 { path: "/favrecipes", element: <RecipesPage />, loader: getFavRecipes },
                 
                 { 
-                    element: <ProtectedRoute />, 
+                    element: <ProtectedRoute user={localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null} setModalOpen={(isOpen) => document.querySelector('body').dispatchEvent(new CustomEvent('open-login-modal', { detail: isOpen }))} />,
                     children: [
                         { path: "/addrecipes", element: <AddFoodRecipe /> },
                         { path: "/editRecipe/:id", element: <EditRecipe /> },
                     ]
                 },
                 { path: "/recipe/:id", element: <RecipeDetails />, loader: getRecipe },
-                { path: "/about", element: <AboutPage /> },
-                { path: "/categories", element: <CategoriesPage />, loader: getCategories },
+                { path: "/about", element: <AboutPage />, loader: getCategories }, // Added getCategories here for the categories page
             ]
         }
     ]);
