@@ -1,176 +1,99 @@
-import React, { useState } from 'react'
-import '../assets/react.svg'
-import { useLoaderData } from 'react-router-dom'
-import { BsStopwatch, BsPerson, BsImage, BsHeart, BsBookmark, BsShare } from 'react-icons/bs'
-import LatestRecipes from '../components/LatestRecipes'
+import React from 'react';
+import { useLoaderData } from 'react-router-dom';
+import { BsStopwatch, BsPerson } from 'react-icons/bs';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion'; // Import the animation library
 
 export default function RecipeDetails() {
-  const recipe = useLoaderData()
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [imageError, setImageError] = useState(false)
+  const recipe = useLoaderData();
 
-  
-  console.log("Recipe details:", recipe)
+  // Animation variants for staggering children elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    }
+  };
 
-  const handleImageLoad = () => {
-    setImageLoaded(true)
-  }
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } }
+  };
 
-  const handleImageError = () => {
-    setImageError(true)
-    setImageLoaded(true)
-  }
-
-
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 1.05 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: 'easeOut' } }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className=" mx-auto flex flex-col lg:flex-row gap-8">
-        {/* Main Content */}
-        <div className="w-full lg:w-3/3 mt-18">
-          {/* Card */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl">
-            
-            {/* Header  */}
-            <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <img 
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='40' r='25' fill='%23ffcccc'/%3E%3Ccircle cx='50' cy='100' r='40' fill='%23ffcccc'/%3E%3C/svg%3E"
-                    width="60px" 
-                    height="60px" 
-                    alt="Profile" 
-                    className="rounded-full object-cover border-2 border-white shadow-md"
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-1">
-                    <BsPerson className="text-white text-xs" />
-                  </div>
-                </div>
-                <div>
-                  <h5 className="font-semibold text-gray-800 capitalize">{recipe?.username || "Unknown User"}</h5>
-                  <p className="text-sm text-gray-500">Recipe Creator</p>
-                </div>
-              </div>
-              
- 
+    // We wrap the entire page in a motion component to animate its entry
+    <motion.div 
+        className="min-h-screen bg-gradient-to-br from-rose-50 to-orange-50 py-12 px-4 sm:px-6 lg:px-8"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* ▼▼▼ NEW TWO-COLUMN LAYOUT STARTS HERE ▼▼▼ */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+
+          {/* --- LEFT COLUMN: STICKY IMAGE --- */}
+          <motion.div className="lg:col-span-2 lg:sticky lg:top-24 h-max" variants={imageVariants}>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden aspect-w-1 aspect-h-1">
+              <img
+                src={recipe.coverImage ? `${import.meta.env.VITE_API_URL}/images/${recipe.coverImage}` : 'https://via.placeholder.com/600x600.png?text=Image+Not+Found'}
+                alt={recipe.title}
+                className="w-full h-full object-cover"
+              />
             </div>
+          </motion.div>
 
-            
-            {recipe?.coverImage && (
-              <div className="relative h-80 sm:h-96 w-full overflow-hidden bg-gray-100">
-                
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse">
-                    <div className="text-center">
-                      <BsImage className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm text-gray-500">Loading image...</p>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Error State */}
-                {imageError ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-4">
-                    <BsImage className="w-16 h-16 text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-center mb-2">Image not available</p>
-                    <p className="text-gray-400 text-sm text-center">The recipe image could not be loaded</p>
-                  </div>
-                ) : (
-                  <>
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}/images/${recipe.coverImage}`}
-                      alt={recipe?.title || "Recipe"}
-                      className={`w-full h-full object-cover transition-all duration-500 ${
-                        imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-                      }`}
-                      onLoad={handleImageLoad}
-                      onError={handleImageError}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                  </>
-                )}
+          {/* --- RIGHT COLUMN: RECIPE DETAILS --- */}
+          <motion.div className="lg:col-span-3" variants={containerVariants}>
+            {/* Title */}
+            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{recipe.title}</motion.h1>
+
+            {/* Author & Time Info */}
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-8 text-gray-600">
+              <div className="flex items-center">
+                <BsPerson className="mr-2 text-red-500" />
+                <span>By {recipe.username || 'Anonymous Chef'}</span>
               </div>
-            )}
-
-            {/* Fallback if no coverImage */}
-            {!recipe?.coverImage && (
-              <div className="relative h-64 w-full overflow-hidden bg-gradient-to-br from-amber-100 to-rose-100 flex items-center justify-center">
-                <div className="text-center p-6">
-                  <BsImage className="w-16 h-16 text-amber-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-amber-800 mb-2">No Image Available</h3>
-                  <p className="text-amber-600">Visualize your delicious {recipe?.title || "recipe"}!</p>
-                </div>
+              <div className="flex items-center">
+                <BsStopwatch className="mr-2 text-red-500" />
+                <span>{recipe.time} min</span>
               </div>
-            )}
+            </motion.div>
 
-            {/* Recipe Title and Time */}
-            <div className="p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2 sm:mb-0 text-center sm:text-left">{recipe?.title || "No Title"}</h1>
-                {recipe?.time && (
-                  <div className="flex items-center bg-amber-100 text-amber-800 px-4 py-2 rounded-full mt-4 sm:mt-0 justify-center sm:justify-start">
-                    <BsStopwatch className="mr-2" />
-                    <span className="font-medium">{recipe.time}</span>
-                  </div>
-                )}
-              </div>
+            {/* Ingredients Section */}
+            <motion.div variants={itemVariants} className="bg-rose-50/50 rounded-xl p-6 mb-8 shadow-sm">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Ingredients</h2>
+              <motion.ul variants={containerVariants} className="space-y-3">
+                {recipe.ingredients.map((item, idx) => (
+                  <motion.li key={idx} variants={itemVariants} className="flex items-start">
+                    <span className="text-red-500 font-bold mr-3 mt-1">&#8226;</span>
+                    <span className="text-gray-700">{item}</span>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            </motion.div>
 
-              {/* Ingredients and Instructions */}
-              <div className="grid md:grid-cols-2 gap-8">
-                
-                <div className="bg-rose-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <span className="w-2 h-5 bg-rose-500 rounded-full mr-3"></span>
-                    Ingredients
-                    <span className="ml-2 text-sm text-rose-600 bg-rose-100 px-2 py-1 rounded-full">
-                      {Array.isArray(recipe?.ingredients) ? recipe.ingredients.length : 0} items
-                    </span>
-                  </h4>
-                  {Array.isArray(recipe?.ingredients) && recipe.ingredients.length > 0 ? (
-                    <ul className="space-y-3">
-                      {recipe.ingredients.map((item, idx) => (
-                        <li key={idx} className="flex items-start transition-transform hover:translate-x-1">
-                          <span className="text-rose-500 mr-3 mt-1">•</span>
-                          <span className="text-gray-700">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-gray-500 italic">No ingredients available</p>
-                  )}
-                </div>
-
-              
-                <div className="bg-amber-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                  <h4 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <span className="w-2 h-5 bg-amber-500 rounded-full mr-3"></span>
-                    Instructions
-                  </h4>
-                  <div className="prose prose-amber max-w-none">
-                    <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                      {recipe?.instructions || "No instructions provided"}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-        
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-500">
-                Enjoy your meal! 🍽️
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        {/* Latest Recipes */}
-        <div className="w-full lg:w-2/3 mt-10 lg:mt-4">
-          <div className="sticky top-26">
-            <LatestRecipes />
-          </div>
+            {/* Instructions Section */}
+            <motion.div variants={itemVariants} className="bg-amber-50/50 rounded-xl p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">Instructions</h2>
+              <motion.div variants={containerVariants} className="space-y-4">
+                {recipe.instructions.split('\n').map((step, idx) => (
+                  <motion.div key={idx} variants={itemVariants} className="flex items-start">
+                    <div className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-red-500 text-white font-bold mr-4">{idx + 1}</div>
+                    <p className="text-gray-700 leading-relaxed pt-1">{step}</p>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    </div>
-  )
+    </motion.div>
+  );
 }

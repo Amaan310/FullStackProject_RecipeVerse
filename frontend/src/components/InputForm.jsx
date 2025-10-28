@@ -23,10 +23,14 @@ export default function InputForm({ onLoginSuccess }) {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("user", JSON.stringify(response.data.user));
             
-            onLoginSuccess();
+            // This tells the new useFavorites hook to refetch the user's favorites
+            window.dispatchEvent(new CustomEvent('auth-change'));
 
+            onLoginSuccess();
+            
+            window.location.reload(); 
         } catch (err) {
-            setError(err.response?.data?.error || "An error occurred. Please try again.");
+            setError(err.response?.data?.message || "An error occurred. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -34,6 +38,7 @@ export default function InputForm({ onLoginSuccess }) {
 
     return (
         <div className="auth-container">
+            {/* The rest of your JSX remains unchanged */}
             <div className="auth-header">
                 <h1 className="auth-app-title">Food Recipes</h1>
                 <h2 className="auth-title">{isSignUp ? "Create Account" : "Welcome Back"}</h2>

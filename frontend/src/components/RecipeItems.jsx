@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BsStopwatchFill } from "react-icons/bs";
 import { FaHeart, FaEdit } from "react-icons/fa";
 import { FiHeart } from 'react-icons/fi';
@@ -10,9 +10,9 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
     console.log(`Recipe: ${item.title}, Time: ${item.time}, Type of Time: ${typeof item.time}`);
 
     const navigate = useNavigate();
-    const { pathname } = useLocation();
-
-    const showAdminControls = pathname === '/myRecipe';
+    
+    const user = JSON.parse(localStorage.getItem('user'));
+    const showAdminControls = user && item.createdBy && user._id === item.createdBy._id;
 
     let categoriesToDisplay = [];
     if (Array.isArray(item.category)) {
@@ -23,7 +23,7 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
     categoriesToDisplay = categoriesToDisplay.filter(cat => cat);
 
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg flex flex-col h-full">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-all duration-300 hover:shadow-xl flex flex-col h-full">
             <div 
                 className="relative h-48 w-full overflow-hidden cursor-pointer"
                 onClick={() => navigate(`/recipe/${item._id}`)}
@@ -35,7 +35,7 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
                 />
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-transparent"></div>
 
-                {!showAdminControls && (
+                {user && !showAdminControls && (
                     <div className="absolute top-2 right-2">
                         <button
                             className={`p-2 rounded-full transition-colors duration-200 backdrop-blur-sm bg-white/80 ${

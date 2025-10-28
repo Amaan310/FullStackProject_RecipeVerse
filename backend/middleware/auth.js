@@ -12,7 +12,9 @@ const verifyToken = async (req, res, next) => {
 
     token = token.split(" ")[1]; 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded;
+
+    req.user = { id: decoded.id || decoded._id };
+
     next();
   } catch (err) {
     console.error("Token verification failed:", err);

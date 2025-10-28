@@ -9,18 +9,22 @@ const verifyToken = require('../middleware/auth');
 
 const { userSignup } = require('../controller/usersignup');
 const { userLogin } = require('../controller/userlogin');
-const { userProfile } = require('../controller/userprofile');
+const { userProfile, getFavorites, addFavorite, removeFavorite } = require('../controller/userprofile');
 
+// --- Recipe Routes ---
 route.get('/getrecipes', getRecipes);
 route.get('/getrecipe/:id', getRecipe);
 route.post('/createrecipe', upload.single('coverImage'), verifyToken, createRecipe);
 route.put('/updaterecipe/:id', updateUpload.single('coverImage'), editRecipe);
 route.delete('/deleterecipe/:id', deleteRecipe);
-
 route.get('/categories', getUniqueCategories);
 
+// --- User & Auth Routes ---
 route.post('/signup', userSignup);
 route.post('/userlogin', userLogin);
 route.get('/userprofile/:id', userProfile);
 
+route.get('/favorites', verifyToken, getFavorites);
+route.post('/favorites/add', verifyToken, addFavorite);
+route.post('/favorites/remove', verifyToken, removeFavorite);
 module.exports = route;

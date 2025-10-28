@@ -4,7 +4,6 @@ import { Outlet, createBrowserRouter, RouterProvider, useNavigate, useLocation, 
 import { Toaster } from 'react-hot-toast';
 import api from './utils/api';
 
-// Components
 import MainNavigation from './components/mainNavigations';
 import Footer from './components/Footer';
 import Model from './components/Model';
@@ -13,7 +12,6 @@ import ContactForm from './components/ContactForm';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import { AuthProvider, useAuth } from './context/AuthContext_temp';
 
-// Pages
 import Home from './pages/home';
 import AddFoodRecipe from './pages/AddFoodRecipe';
 import EditRecipe from './pages/EditRecipe';
@@ -22,17 +20,30 @@ import AboutPage from './pages/AboutPage';
 import RecipesPage from './pages/RecipesPage';
 import CategoriesPage from './pages/CategoriesPage';
 
+// Get the base URL from the environment for public fetches
+const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 const getAllRecipes = async ({ request }) => {
     const url = new URL(request.url);
     const category = url.searchParams.get("category");
+    
+    let apiUrl = `${BASE_API_URL}/api/users/getrecipes`;
+    if (category) {
+        // Build URL parameters for filtering
+        const params = new URLSearchParams({ category: category }).toString();
+        apiUrl += `?${params}`;
+    }
+
     try {
-        const res = await api.get(`/api/users/getrecipes`, {
-            params: { category: category }
-        });
-        return res.data.data || res.data || [];
+        // ▼▼▼ FIX: USE STANDARD FETCH INSTEAD OF api (Axios) ▼▼▼
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.data || [];
     } catch (error) {
-        console.error("Error fetching all recipes:", error);
+        console.error("Error fetching all recipes (public):", error);
         return [];
     }
 };
@@ -43,7 +54,7 @@ const getMyRecipes = async () => {
         if (!user || !user._id) {
             return []; 
         }
-
+        // This remains api.get because it requires authorization
         const allRecipes = await api.get(`/api/users/getrecipes`); 
         
         return allRecipes.data.data.filter(item => item.createdBy?._id === user._id) || [];
@@ -54,10 +65,14 @@ const getMyRecipes = async () => {
     }
 };
 
-const getFavRecipes = () => {
+const getFavRecipes = async () => {
     try {
-        const favs = JSON.parse(localStorage.getItem("fav"));
-        return Array.isArray(favs) ? favs : [];
+        const token = localStorage.getItem('token');
+        if (!token) return [];
+        // This remains api.get because it requires authorization
+        const res = await api.get('/api/users/favorites');
+        return res.data.favorites || [];
+
     } catch (error) {
         console.error("Error fetching fav recipes:", error);
         return [];
@@ -66,6 +81,7 @@ const getFavRecipes = () => {
 
 const getRecipe = async ({ params }) => {
     try {
+        // This remains api.get because it requires authorization for detail data
         const res = await api.get(`/api/users/getrecipe/${params.id}`);
         const recipe = res.data.data || res.data;
         
@@ -88,15 +104,21 @@ const getRecipe = async ({ params }) => {
 
 const getCategories = async () => {
     try {
-        const res = await api.get(`/api/users/categories`);
-        return res.data.data || res.data || [];
+        // ▼▼▼ FIX: USE STANDARD FETCH INSTEAD OF api (Axios) ▼▼▼
+        const response = await fetch(`${BASE_API_URL}/api/users/categories`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.data || [];
     } catch (error) {
-        console.error("Error fetching categories:", error);
+        console.error("Error fetching categories (public):", error);
         return [];
     }
 };
 
 const getRecipesAndCategories = async (loaderRequest) => {
+    // Both now use the updated getAllRecipes and getCategories functions
     const [recipes, categories] = await Promise.all([
         getAllRecipes(loaderRequest),
         getCategories() 
@@ -104,7 +126,6 @@ const getRecipesAndCategories = async (loaderRequest) => {
     return { recipes, categories };
 };
 
-// --- Root Layout Component ---
 function RootLayout() {
     const [modalOpen, setModalOpen] = useState(false);
     const [contactModalOpen, setContactModalOpen] = useState(false);
@@ -115,16 +136,21 @@ function RootLayout() {
     const matches = useMatches(); 
 
     useEffect(() => {
+        const openModalListener = (event) => {
+            if (event.detail === true) {
+                setModalOpen(true);
+            }
+        };
+        window.addEventListener('open-login-modal', openModalListener);
+        return () => window.removeEventListener('open-login-modal', openModalListener);
+    }, []);
+
+    useEffect(() => {
         const userData = localStorage.getItem('user');
         if (userData) {
             setUser(JSON.parse(userData));
         }
     }, []);
-
-    useEffect(() => {
-
-    }, [user, location.pathname, setModalOpen]);
-
 
     const handleLoginSuccess = () => {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -135,6 +161,8 @@ function RootLayout() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+
+        window.dispatchEvent(new CustomEvent('auth-change'));
         setUser(null);
         const protectedPaths = ['/myRecipe', '/favrecipes', '/addrecipes', '/editRecipe'];
         if (protectedPaths.some(path => location.pathname.startsWith(path))) {
@@ -167,7 +195,6 @@ function RootLayout() {
     );
 }
 
-// --- App Component ---
 export default function App() {
     const router = createBrowserRouter([
         {
@@ -180,7 +207,7 @@ export default function App() {
                 { path: "/favrecipes", element: <RecipesPage />, loader: getFavRecipes },
                 
                 { 
-                    element: <ProtectedRoute user={localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null} setModalOpen={(isOpen) => document.querySelector('body').dispatchEvent(new CustomEvent('open-login-modal', { detail: isOpen }))} />,
+                    element: <ProtectedRoute />, 
                     children: [
                         { path: "/addrecipes", element: <AddFoodRecipe /> },
                         { path: "/editRecipe/:id", element: <EditRecipe /> },

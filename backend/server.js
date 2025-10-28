@@ -12,7 +12,7 @@ dbConnect();
 
 const allowedOrigins = [
     'https://foodverse-frontend.vercel.app',
-    'https://foodverse-frontend-r5f7856dm-amaans310s-projects.vercel.app'
+    'https://foodverse-frontend-r5f7856dm-amaans310s-projects.vercel.app','http://localhost:5173'
 ];
 
 app.use(cors({

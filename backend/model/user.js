@@ -14,7 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    favorites: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipes'
+    }]
 });
-
 
 module.exports = mongoose.model('User', userSchema);
