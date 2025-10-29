@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { BsStopwatchFill } from "react-icons/bs";
 import { FaHeart, FaEdit } from "react-icons/fa";
 import { FiHeart } from 'react-icons/fi';
@@ -10,9 +10,12 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
     console.log(`Recipe: ${item.title}, Time: ${item.time}, Type of Time: ${typeof item.time}`);
 
     const navigate = useNavigate();
+    const location = useLocation(); 
     
     const user = JSON.parse(localStorage.getItem('user'));
-    const showAdminControls = user && item.createdBy && user._id === item.createdBy._id;
+    
+    const isOwner = user && item.createdBy && user._id === item.createdBy._id;
+    const showAdminControls = isOwner && location.pathname === '/myRecipe';
 
     let categoriesToDisplay = [];
     if (Array.isArray(item.category)) {
@@ -34,7 +37,6 @@ export default function RecipeItems({ item, onDelete, onFavToggle, isFavorite })
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/40 to-transparent"></div>
-
                 {user && !showAdminControls && (
                     <div className="absolute top-2 right-2">
                         <button

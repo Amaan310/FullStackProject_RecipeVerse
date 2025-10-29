@@ -45,7 +45,6 @@ const getAllRecipes = async ({ request }) => {
     }
 };
 
-// NOTE: This loader is now OBSOLETE but kept for reference.
 const getMyRecipes = async () => {
     try {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -200,18 +199,18 @@ export default function App() {
                 { index: true, element: <Home /> },
                 { path: "/recipes", element: <RecipesPage />, loader: getRecipesAndCategories },
                 { path: "/myRecipe", element: <RecipesPage />, loader: getRecipesAndCategories },
-                
                 { path: "/favrecipes", element: <RecipesPage />, loader: getFavRecipes },
                 
                 { 
-                    element: <ProtectedRoute user={localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null} setModalOpen={(isOpen) => document.querySelector('body').dispatchEvent(new CustomEvent('open-login-modal', { detail: isOpen }))} />,
+                    element: <ProtectedRoute />,
                     children: [
                         { path: "/addrecipes", element: <AddFoodRecipe /> },
                         { path: "/editRecipe/:id", element: <EditRecipe /> },
                     ]
                 },
                 { path: "/recipe/:id", element: <RecipeDetails />, loader: getRecipe },
-                { path: "/about", element: <AboutPage />, loader: getCategories }, // Added getCategories here for the categories page
+                { path: "/about", element: <AboutPage /> }, 
+                { path: "/categories", element: <CategoriesPage />, loader: getCategories },
             ]
         }
     ]);
