@@ -11,8 +11,8 @@ const dbConnect = require('./config/dbcon');
 dbConnect();
 
 const allowedOrigins = [
-    'https://foodverse-frontend.vercel.app',
-    'https://foodverse-frontend-r5f7856dm-amaans310s-projects.vercel.app','http://localhost:5173'
+    'http://localhost:5173',
+    'https://foodverse07.netlify.app' 
 ];
 
 app.use(cors({
