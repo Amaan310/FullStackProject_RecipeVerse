@@ -105,7 +105,7 @@ const FilterControls = ({ allCategories, selectedCategory, onCategoryChange }) =
                     );
                 })}
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 text-white">.</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">.</label>
                     <button
                         onClick={() => onCategoryChange('All')}
                         className="mt-1 w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none"
